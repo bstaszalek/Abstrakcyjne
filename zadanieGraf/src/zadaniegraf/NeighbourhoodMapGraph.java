@@ -9,18 +9,22 @@ import java.util.Set;
 public class NeighbourhoodMapGraph<NodeLabelType, EdgeLabelType> implements EditableGraph<NodeLabelType, EdgeLabelType>{
 
     LinkedHashMap<LabeledVertex<NodeLabelType>, List <LabeledEdge<EdgeLabelType>>> neighbourhoodMap = new LinkedHashMap<>();
-    
+    int edgesCounter;
+    int vertexCounter;
     public NeighbourhoodMapGraph(){
     }
     
     public NeighbourhoodMapGraph(List<?> list){
         list.forEach(label -> addVertex((NodeLabelType) label));
+        edgesCounter = 0;
+        vertexCounter = 0;
     }
 
     @Override
     public LabeledVertex<NodeLabelType> addVertex(NodeLabelType label) {
         LabeledVertex<NodeLabelType> vertex = new Vertex<>(label);
         neighbourhoodMap.put(vertex, new ArrayList<>());
+        vertexCounter += 1;
         return vertex;
     }
 
@@ -29,6 +33,7 @@ public class NeighbourhoodMapGraph<NodeLabelType, EdgeLabelType> implements Edit
         LabeledEdge<EdgeLabelType> edge = new Edge<>(from, to);
         edge.setLabel(label);
         neighbourhoodMap.get(from).add(edge);
+        edgesCounter += 1;
         return edge;
     }
 
@@ -42,9 +47,20 @@ public class NeighbourhoodMapGraph<NodeLabelType, EdgeLabelType> implements Edit
             }
         }
         neighbourhoodMap.get(from).remove(edgeForRemoval);
+        edgesCounter -= 1;
         return edgeForRemoval;
     }
 
+    @Override
+    public int getVertexCount(){
+        return vertexCounter;
+    }
+    
+    @Override
+    public int getEdgesCount(){
+        return edgesCounter;
+    }
+    
     @Override
     public Iterator<? extends LabeledVertex<NodeLabelType>> vertexIterator() {
         return neighbourhoodMap.keySet().iterator();
@@ -76,5 +92,6 @@ public class NeighbourhoodMapGraph<NodeLabelType, EdgeLabelType> implements Edit
     @Override
     public void removeVertex(LabeledVertex<NodeLabelType> vertex) {
         neighbourhoodMap.remove(vertex);
+        vertexCounter -= 1;
     }
 }
